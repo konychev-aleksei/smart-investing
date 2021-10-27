@@ -1,0 +1,93 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+
+    background-color: white;    
+    display: flex;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.header > img {
+    margin: 10px 50px;
+    flex-basis: 100px;
+    z-index: 1000;
+}
+
+.header > i {
+    flex-basis: 150px;
+    text-align: right;
+    font-size: 14px;
+    margin-top: 16px;
+}
+
+.header > button {
+    text-align: center;
+    flex-basis: 110px;
+}
+
+.header > input {
+    margin: 8px calc(50% - 450px);
+    flex-basis: 350px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border: none;
+    flex: 1;
+
+    font-size: 12px;
+    padding: 0 15px 0 30px;
+}
+
+.header > input::-webkit-search-cancel-button {
+    filter: invert(.5);
+}
+
+.guess {
+    position: fixed;
+    background-color: white;
+    top: 45px;
+    left: calc(50% - 215px);
+    width: 405px;
+    height: auto;
+    z-index: 100;
+    border-radius: 0 0 10px 10px;
+
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.stock {
+    cursor: pointer;
+    margin: 0;    
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+}
+
+.stock:hover {
+    background-color: #fdfdfd;
+}
+
+.stock > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stock > img {
+    padding: 15px;
+}
+
+.stock > div > h1 {
+    font-size: 15px;
+    margin: 7px 25px;
+}
+
+.stock > div > h3 {
+    margin: -5px 25px;
+    font-size: 11px;
+    font-weight: normal;
+    color: grey;
+}

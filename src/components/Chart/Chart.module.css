@@ -1,0 +1,179 @@
+.wrapper {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 50px);
+    display: flex;
+}
+
+.list {
+    flex-basis: 350px;
+    margin: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);    
+    border-radius: 10px;
+}
+
+.list > p {
+    text-align: center;
+    line-height: 30px;
+    color: grey;
+}
+
+.list > div {
+    overflow: auto;
+    height: calc(100% - 80px);
+}
+
+.chart {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+.stock {
+    margin: 15px 10px 0 10px;    
+    height: 50px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    display: flex;
+    cursor: pointer;
+}
+
+
+.stock > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stock > input {
+    margin-top: 20px;
+    flex-basis: 60px;
+    cursor: pointer
+}
+
+.stock > img {
+    padding: 15px;
+}
+
+.stock > div > h1 {
+    font-size: 15px;
+    margin: 7px 25px;
+}
+
+.stock > div > h3 {
+    margin: -5px 25px;
+    font-size: 11px;
+    font-weight: normal;
+    color: grey;
+}
+
+.info {
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);    
+    padding: 20px;    
+    margin: 5px 10px 10px 10px;    
+}
+
+.info > * {
+    margin: 0;
+}
+
+.info > h3 {
+    font-size: 18px;
+}
+
+.info > p {
+    color: grey;
+    font-size: 14px;
+}
+
+.price {
+    margin-top: 15px;
+    display: flex;
+    align-items:baseline;
+}
+
+.price > h1, .price > h3 {
+    line-height: 0;
+}
+
+.price > h3 {
+    font-weight: normal;
+    color: red;
+    font-size: 14px;
+}
+
+.price > button {
+    margin: -10px 0 0 25px;
+    font-size: 24px;
+}
+
+
+
+
+.chartArea {
+    padding: 20px;
+    margin: 5px 10px 10px 10px;    
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.form {
+    position: absolute;
+    right: 30px;
+    top: 25px;
+    width: 600px;
+    height: 110px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.dates {
+    flex: 1;
+    display: flex;
+    align-items: baseline;  
+}
+
+.dates > input {
+    flex: 1;
+    height: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 5px 10px;
+    border: none;
+}
+
+.dates > p {
+    flex-basis: 40px;
+    text-align: center;
+}
+
+
+.submission {
+    flex: 1;
+    display: flex;
+    gap: 15px;
+    align-items: center;  
+}
+
+.submission > select {
+    flex: 1;
+    height: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 5px 10px;
+    border: none;    
+}
+
+.submission > button {
+    flex-basis: 60px;
+    height: 30px;
+    border-radius: 10px;
+    background-color: #4585f4;
+    color: white;
+}

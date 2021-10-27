@@ -1,0 +1,97 @@
+* {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    outline: none;
+}
+
+a, a:visited {
+    text-decoration: none;
+    color: #555;
+}
+
+.wrapper {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.gradient {
+    flex-basis: 390px;
+    background: linear-gradient(45deg, #EECFBA, #C5DDE8);
+}
+
+.form {
+    margin: 40px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;    
+    font-weight: bold;
+}
+
+.form > img {
+    width: 185px;
+    flex-basis: 38px;
+}
+
+.form > h1 {
+    color: #444;
+}
+
+.form > hr {
+    width: 100%;
+}
+
+.formik > input {
+    width: 310px;
+    height: 35px;
+    padding-left: 15px;
+    border-radius: 10px;
+    border: 1px solid silver;
+    margin-bottom: 5px;
+}
+
+.formik > b {
+    color: crimson;
+    
+}
+
+.form > b {
+    margin-top: 35px;
+    color:crimson;
+    font-size: 14px;
+}
+
+.google {
+    margin: 20px 0;
+    height: 30px;
+    padding: 0 90px 0 0;
+}
+
+.loginpannel {
+    margin-top: 40px;
+    display: flex;
+    height: 35px;
+    gap: 15px;
+    font-size: 14px;    
+}
+
+.loginpannel > button:nth-child(1) {
+    flex-basis: 120px;
+    background-color: #4285f4;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.loginpannel > p {
+    margin-top: 8px;
+    flex-basis: 120px;
+}
+
+.loginpannel > button:nth-child(3) {
+    flex: 1;
+}
