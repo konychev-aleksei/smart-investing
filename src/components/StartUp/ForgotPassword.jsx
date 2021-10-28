@@ -10,7 +10,7 @@ const ForgotPassword = () => {
     const { loginpannel, signin, wrapper, videofill, inputStyle } = StartUpCSS
 
     const resetEmail = async () => {
-        console.log(inputRef?.cuurent.value || '')
+        console.log(inputRef?.current.value || '')
         try {
             await auth.sendPasswordResetEmail('konychevaleksei@yandex.ru')
         }
