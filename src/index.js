@@ -55,7 +55,10 @@ const App = () => {
                     <ForgotPassword />
                   </Route>                   
                 </>                
-            }                        
+            }                 
+            <Route path="*">
+             <Redirect to="/product" />
+            </Route>      
           </Switch>
         </BrowserRouter>
     </AppContext.Provider>
