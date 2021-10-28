@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom'
 
 import AppContext from './AppContext'
 
@@ -16,6 +16,8 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 
 
 const App = () => {
+  const history = useHistory()
+  
   const [favorites, setFavorites] = useState([])
   const [user] = useAuthState(auth)
   const value = { 
@@ -61,6 +63,7 @@ const App = () => {
             </Route>      
           </Switch>
         </BrowserRouter>
+        <button onClick={ () => history.push('/product') }>Start</button>
     </AppContext.Provider>
   )
 }
