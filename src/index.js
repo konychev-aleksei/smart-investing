@@ -13,7 +13,6 @@ import { auth } from './firebase'
 
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-import * as api from './api/index'
 
 
 const App = () => {
