@@ -32,7 +32,6 @@ const StockPale = ({ ticker, name, currency}) => {
 const Chart = () => {
     const { favorites, setFavorites } = useContext(AppContext)
     const { ticker } = useParams()
-    const [chartType, setChartType] = useState("Candle")
     const includes = favorites.filter(item => item.ticker === ticker).length
 
     useEffect(() => {
