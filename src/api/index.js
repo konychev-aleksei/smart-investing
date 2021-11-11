@@ -32,7 +32,7 @@ export const getUserCredsByEmail = async (email) => {
 
 export const getUserProfitabilityByEmail = async (email) => {
   const response = await axios({
-    url: `${baseName}/get-user-profitability/${email}/`,
+    url: `/api/get-user-profitability/${email}/`,
     method: GET,
     headers: {
       Authorization: getToken()
