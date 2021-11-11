@@ -9,7 +9,7 @@ const getToken = () => window.sessionStorage.getItem('auth')
 
 export const createUserByEmailAndUsername = async (email, username) => {
   return await axios({
-    url: `${baseName}/create-user/${email}/${username}/`,
+    url: `/api/create-user/${email}/${username}/`,
     method: POST,
     headers: {
       Authorization: getToken()
@@ -19,7 +19,7 @@ export const createUserByEmailAndUsername = async (email, username) => {
 
 export const getUserCredsByEmail = async (email) => {
   const response = await axios({
-    url: `${baseName}/get-user-detail/${email}/`,
+    url: `/api/get-user-detail/${email}/`,
     method: GET,
     headers: {
       Authorization: getToken()
@@ -45,7 +45,7 @@ export const getUserProfitabilityByEmail = async (email) => {
 
 export const getStockInfoByTicker = async (ticker) => {
   const response = await axios({
-    url: `${baseName}/get-stock-changes/${ticker}/`,
+    url: `/api/get-stock-changes/${ticker}/`,
     method: GET
   })
 
@@ -56,7 +56,7 @@ export const getStockInfoByTicker = async (ticker) => {
 //bearer token required
 export const addStockToFavorites = async (ticker, email) => {
   await axios({
-    url: `${baseName}/add-stock-to-favorites/${ticker}/${email}/`,
+    url: `/api/add-stock-to-favorites/${ticker}/${email}/`,
     method: PUT,
     headers: {
       Authorization: getToken()
@@ -68,7 +68,7 @@ export const addStockToFavorites = async (ticker, email) => {
 //bearer token required
 export const removeStockFromFavorites = async (ticker, email) => {
   await axios({
-    url: `${baseName}/remove-stock-from-favorites/${ticker}/${email}/`,
+    url: `/api/remove-stock-from-favorites/${ticker}/${email}/`,
     method: PUT,
     headers: {
       Authorization: getToken()
@@ -92,14 +92,14 @@ export const getCandles = async (data) => {
   }
 
   const staticCandlesResponse = await axios({
-    url: `${baseName}/get-candles/?ticker=${ticker}&from=${__startDate}T00:00:00Z&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}`,
+    url: `/api/get-candles/?ticker=${ticker}&from=${__startDate}T00:00:00Z&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}`,
     method: GET
   })
 
   const ____startDate = staticCandlesResponse.data[staticCandlesResponse.data.length - 1]?.date
 
   const predictedCandlesResponse = await axios({
-    url: `${baseName}/get-predictions-data/?ticker=${ticker}&from=${____startDate}&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}&approximation=0`,
+    url: `/api/get-predictions-data/?ticker=${ticker}&from=${____startDate}&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}&approximation=0`,
     method: GET,
     headers: {
       Authorization: getToken()
