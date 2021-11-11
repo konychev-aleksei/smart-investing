@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import style from './Header.module.css'
 import { useHistory } from 'react-router-dom'
 import { auth } from '../../firebase'
@@ -8,16 +8,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 
 import AppContext from '../../AppContext'
+import { queryByTestId } from '@testing-library/dom'
 
 
 const StockPale = ({ ticker, name, currency, setQuery }) => {
-    const { favorites, setFavorites } = useContext(AppContext)
+    const { removeFromFavorites, addToFavorites, favorites } = useContext(AppContext)    
+    const history = useHistory()
+    
     const includes = favorites.filter(item => item.ticker === ticker).length
 
     const handleChoice = async (e) => {
         setQuery('')
-        //setCurrentStock(await api.getStock(e.target.value))
+        history.push(`/stock/${ ticker }`)
     }
+
+    const handleAddition = async () => {
+        includes ? await removeFromFavorites(ticker) : await addToFavorites({ ticker, name, currency })               
+    }    
 
     return(
         <div className={ style.stock }>
@@ -25,28 +32,25 @@ const StockPale = ({ ticker, name, currency, setQuery }) => {
                 <h1>{ ticker }</h1>
                 <h3>{ name.length > 50 ? `${name.substr(0, 50)}...` : name }</h3>
             </div>   
-            <button onClick={
-                () => setFavorites(
-                    includes ?
-                        favorites.filter(item => item.ticker !== ticker)
-                    :
-                        [...favorites, { ticker, name, currency }]
-                )
-            }>
+            <button onClick={ handleAddition }>
                 <FontAwesomeIcon style={ !includes && { color: '#CCF' }} icon={ faStar } />
             </button>    
-            <img src={`${process.env.PUBLIC_URL}/${currency}.png`} alt="" />
+            <img src={`${ process.env.PUBLIC_URL }/${ currency }.png`} alt="" />
         </div>            
     )    
 }
 
 
 const Header = () => {
+    const { userName, promptVisible, setPromptVisible, setFavorites } = useContext(AppContext)
+
     const [query, setQuery] = useState('')
     const history = useHistory()
 
     const signOut = async () => {
-        sessionStorage.removeItem('auth')
+        setFavorites([])
+
+        window.sessionStorage.removeItem('auth')
         await auth.signOut()
         history.push('/product')
     }
@@ -55,6 +59,8 @@ const Header = () => {
         return stock.ticker.includes(query.toUpperCase()) 
         || stock.name.toLowerCase().includes(query.toLowerCase())
     }
+
+    useEffect(() => setPromptVisible(!!query.length), [query, setPromptVisible])
 
     return (
         <>
@@ -70,12 +76,12 @@ const Header = () => {
                     type="search" 
                     value={ query }
                 />
-                <i>Aleksei Konychev</i>
+                <i>{ userName }</i>
                 <button onClick={ signOut }>Logout</button>
             </div>       
             <div className={ style.guess }>
                 {
-                    query 
+                    promptVisible 
                     && 
                     instruments
                         .filter(stock => search(stock))

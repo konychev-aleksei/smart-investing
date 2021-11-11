@@ -1,107 +1,118 @@
 import axios from 'axios'
+import __data from '../mocks/StocksUtility'
 
-const baseDomain = 'https://sp0tify.herokuapp.com', method = 'POST'
+const POST = 'POST', GET = 'GET', PUT = 'PUT',
+      baseName = 'http://ec2-18-196-41-70.eu-central-1.compute.amazonaws.com:8000/api'
+
+const getToken = () => window.sessionStorage.getItem('auth')
 
 
-export const getToken = () => {
-  return window.sessionStorage.getItem("auth")
-}
-
-export const deleteToken = () => {
-  window.sessionStorage.removeItem("auth")
-}
-
-export const createAccount = async (userName) => {
+export const createUserByEmailAndUsername = async (email, username) => {
   return await axios({
-    url: `${baseDomain}/post/createaccount`,
-    method,
-    data: { userName },
-    headers: { Authorization: `Bearer ${ getToken() }` }
+    url: `${baseName}/create-user/${email}/${username}/`,
+    method: POST,
+    headers: {
+      Authorization: getToken()
+    }
   })
 }
 
-export const runSearch = async (query) => {
-  return await axios({
-    url: `${baseDomain}/post/runsearch`,
-    method,
-    data: { query }
+export const getUserCredsByEmail = async (email) => {
+  const response = await axios({
+    url: `${baseName}/get-user-detail/${email}/`,
+    method: GET,
+    headers: {
+      Authorization: getToken()
+    }    
+  })
+
+  return response.data
+}
+
+
+export const getUserProfitabilityByEmail = async (email) => {
+  const response = await axios({
+    url: `${baseName}/get-user-profitability/${email}/`,
+    method: GET,
+    headers: {
+      Authorization: getToken()
+    }        
+  })
+
+  return response.data
+}
+
+
+export const getStockInfoByTicker = async (ticker) => {
+  const response = await axios({
+    url: `${baseName}/get-stock-changes/${ticker}/`,
+    method: GET
+  })
+
+  return response.data
+}
+
+
+//bearer token required
+export const addStockToFavorites = async (ticker, email) => {
+  await axios({
+    url: `${baseName}/add-stock-to-favorites/${ticker}/${email}/`,
+    method: PUT,
+    headers: {
+      Authorization: getToken()
+    }    
   })
 }
 
-export const getArtist = async (name) => {
-  return await axios({
-    url: `${baseDomain}/post/getartist`,
-    method,
-    data: { name }
+
+//bearer token required
+export const removeStockFromFavorites = async (ticker, email) => {
+  await axios({
+    url: `${baseName}/remove-stock-from-favorites/${ticker}/${email}/`,
+    method: PUT,
+    headers: {
+      Authorization: getToken()
+    }    
   })
 }
 
-export const getPlaylist = async (name) => {
-  return await axios({
-    url: `${baseDomain}/post/getplaylist`,
-    method,
-    data: { name }
-  })
-}
 
-export const addTrackToPlaylist = async (name, _id) => {
-  return await axios({
-    url: `${baseDomain}/post/addtracktoplaylist`,
-    method,
-    data: { name, _id },
-    headers: { Authorization: `Bearer ${ getToken() }` }
-  })
-}
+//bearer token required to check when approximation method is set up nahaer ya eto tak napisal
+export const getCandles = async (data) => {
+  const { ticker, startDate, finalDate, resolution } = data
 
-export const rearrangeTracks = async (name, src, dest) => {
-  return await axios({
-    url: `${baseDomain}/post/rearrangeplaylist`,
-    method,
-    data: { name, sp: [src, dest] }
-  })
-}
+  const __startDate = startDate.split('.').reverse().join('-')
+  const __finalDate = finalDate.split('.').reverse().join('-')
 
-export const createPlaylist = async (name, base64, userName) => {
-  return await axios({
-    url: `${baseDomain}/post/createplaylist`,
-    method,
-    data: { name, base64, userName },
-    headers: { Authorization: `Bearer ${ getToken() }` }
-  })
-}
+  const convert = {
+    '1 час': 'hour',
+    '1 день': 'day',
+    '1 неделя': 'week',
+    '1 месяц': 'month'
+  }
 
-export const getMyPlaylists = async (userName) => {
-  return await axios({
-    url: `${baseDomain}/post/getmyplaylists`,
-    method,
-    data: { userName },
-    headers: { Authorization: `Bearer ${ getToken() }` }
+  const staticCandlesResponse = await axios({
+    url: `${baseName}/get-candles/?ticker=${ticker}&from=${__startDate}T00:00:00Z&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}`,
+    method: GET
   })
-}
 
-export const deleteTrackFromPlaylist = async (name, _id) => {
-  return await axios({
-    url: `${baseDomain}/post/deletetrackfromplaylist`,
-    method,
-    data: { name, _id },
-    headers: { Authorization: `Bearer ${ getToken() }` }
-  })
-}
+  const ____startDate = staticCandlesResponse.data[staticCandlesResponse.data.length - 1]?.date
 
-export const addPlaylist = async (userName, name) => {
-  return await axios({
-    url: `${baseDomain}/post/addplaylist`,
-    method,
-    data: { userName, name },
-    headers: { Authorization: `Bearer ${ getToken() }` }
+  const predictedCandlesResponse = await axios({
+    url: `${baseName}/get-predictions-data/?ticker=${ticker}&from=${____startDate}&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}&approximation=0`,
+    method: GET,
+    headers: {
+      Authorization: getToken()
+    }        
   })
-}
 
-export const removePlaylist = async (userName, name) => {
-  return await axios({
-    url: `${baseDomain}/post/removeplaylist`,
-    method,
-    data: { userName, name },
-    headers: { Authorization: `Bearer ${ getToken() }` }
-  })
+  const trimItem = (item) => {
+    const dateFormat = item.date.substring(0, 10).split('-')
+    return {...item, date: new Date(+dateFormat[0], +dateFormat[1], +dateFormat[2])}     
+  }
+  
+  const __staticCandlesResponse = staticCandlesResponse.data.map(item => trimItem(item))
+  const __predictedCandlesResponse = predictedCandlesResponse.data.map(item => trimItem(item))
+
+  return [...__staticCandlesResponse, ...__predictedCandlesResponse]
 }

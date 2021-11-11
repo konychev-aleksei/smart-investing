@@ -8,6 +8,7 @@ import firebase from 'firebase'
 
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import * as api from '../../api/index'
 
 
 const initialValues = {
@@ -20,8 +21,8 @@ const initialValues = {
 const formSchema = Yup.object().shape({
     email: Yup.string().required('Необходимо заполнить поле «Email»‎').email('Необходимо ввести валидный email'),
     firstname: Yup.string().required('Необходимо заполнить поле «Firstname»‎').max(25, 'Длина поля превышает 25 символов'),
-    lastname: Yup.string().required('Необходимо заполнить поле «Lastname»‎').max(25, 'Длина поля превышает 25 символов'),
-    password: Yup.string().required('Необходимо заполнить поле «Password»‎').min(6, 'Длина поля меньше 6 символов').max(25, 'Длина поля превышает 25 символов')
+    lastname: Yup.string().required('Необходимо заполнить поле «Lastname»‎').max(25, 'Длина пароля превышает 25 символов'),
+    password: Yup.string().required('Необходимо заполнить поле «Password»‎').min(6, 'Длина пароля меньше 6 символов').max(25, 'Длина пароля превышает 25 символов')
 })
 
 
@@ -36,7 +37,6 @@ const SignUp = () => {
 
         try {
             await auth.signInWithPopup(provider)
-            sessionStorage.setItem('auth', true)
             history.push('/stock/welcome')
         }
         catch (e) {
@@ -46,8 +46,11 @@ const SignUp = () => {
 
     const signUpEmail = async (values) => {
         try {
-            await auth.createUserWithEmailAndPassword(values.email, values.password)
-            history.push('/stock/welcome')
+            auth.createUserWithEmailAndPassword(values.email, values.password)
+                .then(async () => {
+                    await api.createUserByEmailAndUsername(values.email, `${values.firstname} ${values.lastname}`)
+                    history.push('/stock/welcome')
+                })
         }
         catch (e) {
             setExists(true)

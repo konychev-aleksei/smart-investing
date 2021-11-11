@@ -3,16 +3,21 @@ import StartUpCSS from './StartUp.module.css'
 
 import { auth } from '../../firebase'
 
+import { Formik, Form, Field } from 'formik'
+import * as Yup from 'yup'
+
+const formSchema = Yup.object().shape({
+    email: Yup.string().required('Необходимо заполнить поле «Email»‎').email('Необходимо ввести валидный email')
+})
+
 
 const ForgotPassword = () => {
-    const inputRef = useRef(null)
     const [reseted, setReseted] = useState(false)
     const { loginpannel, signin, wrapper, videofill, inputStyle } = StartUpCSS
 
-    const resetEmail = async () => {
-        console.log(inputRef?.current.value || '')
+    const handleSubmit = async (values) => {
         try {
-            await auth.sendPasswordResetEmail('konychevaleksei@yandex.ru')
+            await auth.sendPasswordResetEmail(values.email)
         }
         catch (e) {
             console.error(e)
@@ -27,16 +32,31 @@ const ForgotPassword = () => {
                 <h1>Reset your password</h1>
                 <h2>To reset your password, enter your email below and submit. An email will be sent to you with instructions about how to complete the process.</h2>
                 <hr />
+                <Formik
+                    onSubmit={ handleSubmit }
+                    initialValues={ { email: '' } }
+                    validationSchema={ formSchema }
+                >
+                    {
+                        ({ touched, errors, isSubmitting }) => (  
+                            <Form>                  
+                                <p>Email</p>
+                                <Field 
+                                    className={ inputStyle }
+                                    validate={ formSchema }
+                                    name="email"
+                                    type="email" 
+                                />    
+                                { errors.email && touched.email && <b style={{ color: 'crimson', fontSize: '14px' }}>{ errors.email }</b> }
+                                <div className={ loginpannel }>
+                                    <button type="submit" disabled={ isSubmitting }>Reset</button>
+                                </div>
+                            </Form>
+                        )
+                    }                       
+                </Formik>                           
 
-                <p>Email</p>
-                <input className={ inputStyle } ref={ inputRef } />
-
-                <div className={ loginpannel }>
-                    <button onClick={ resetEmail }>Reset</button>
-                </div>
-                {
-                    reseted && <b>На данную электронную почту отправлена инструкция по восстановлению аккаунта</b>
-                }                
+                { reseted && <b style={{ color: '#0c7' }}>На данную электронную почту отправлена инструкция по восстановлению аккаунта</b> }                
             </div>
             <div className={ videofill }>
                 <span></span>
