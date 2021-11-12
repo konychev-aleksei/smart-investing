@@ -2,7 +2,7 @@ import axios from 'axios'
 import __data from '../mocks/StocksUtility'
 
 const POST = 'POST', GET = 'GET', PUT = 'PUT',
-      baseName = 'http://ec2-18-196-41-70.eu-central-1.compute.amazonaws.com:8000/api'
+      baseName = 'https://smart-investing-back.herokuapp.com/api'
 
 const getToken = () => window.sessionStorage.getItem('auth')
 
