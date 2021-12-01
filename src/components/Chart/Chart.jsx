@@ -46,7 +46,7 @@ const StockInfo = ({ stockInfo, includes, ticker, name, currency }) => {
     }
 
     let { change, price } = stockInfo
-    const percentage = `${ (change / price).toFixed(2) }%`
+    const percentage = `${ (change / price + 0.01).toFixed(2) }%`
     const __name = `${name}. Currency in ${currency}`
     const __change = `${change ?? ''}${converter[currency]}`
 
@@ -112,7 +112,7 @@ const StockPale = ({ processChange, ticker, name, currency, view }) => {
 }    
 
 
-const Chart = ({ userProfitability }) => {
+const Chart = ({ userProfitability, setRange }) => {
     const history = useHistory()
     const CANDLE = "Candle"
     const LINE = "Line"
@@ -137,6 +137,8 @@ const Chart = ({ userProfitability }) => {
 
     //@candles-data
     const [data, setData] = useState([])
+
+    const [kizaru, setKizaru] = useState(-1)
 
     const toTimeStamp = (date) => {
         date = date.split('-')
@@ -184,6 +186,8 @@ const Chart = ({ userProfitability }) => {
         Promise.all(requests)
             .then(res => result = [...result, ...res])
             .then(() => setData(result))
+
+        setKizaru(-1)
     }
 
     useEffect(() => {
@@ -244,16 +248,31 @@ const Chart = ({ userProfitability }) => {
         number: true,
     }
 
+    const keys = {
+        "День": "day",
+        "Неделя": "week",
+        "Месяц": "month",
+        "Год": "year"
+    }
+
     return (
         <>       
             <Header />        
             <div onClick={ () => setPromptVisible(false) } className={style.wrapper}>
                 <div className={style.leftList}>
                     <div className={style.profit}>
-                        <p>Портфель</p>
-                        <div className={style.profitText}>
-                            Доходность портфеля за месяц на основании добавленных акций
-                        </div>
+                        <p>Доходность портфеля</p>
+                        <select 
+                            onChange={ e => {
+                                setRange(keys[e.target.value])
+                            }}
+                            className={ style.periodSelect }
+                        >
+                            <option selected>День</option>
+                            <option>Неделя</option>
+                            <option>Месяц</option>
+                            <option>Год</option>
+                        </select>    
                         <div className={style.progressbar}>
                             <CircularProgressBar {...props} clssName={style.progressbar} />
                         </div>
@@ -319,9 +338,9 @@ const Chart = ({ userProfitability }) => {
                                     >
                                         { DEFAULT_APPROX }
                                     </option>
-                                    <option>Линейная регрессия</option>
-                                    <option>Квадратичная регрессия</option>
-                                    <option>Квадратичный сплайн</option>
+                                    <option>Линейная экстраполяция</option>
+                                    <option>Авторегрессия</option>
+                                    <option>Сплайн</option>
                                 </select>
                                 <select 
                                     value={ resolution }
@@ -354,7 +373,7 @@ const Chart = ({ userProfitability }) => {
                                     <FontAwesomeIcon icon={ faRandom } />
                                 </button>                                
                             </div>
-                        </div>                    
+                        </div>
                     </div>
                     <div className={ style.chartArea }>
                         <button 
@@ -365,7 +384,27 @@ const Chart = ({ userProfitability }) => {
                             <FontAwesomeIcon icon={ faChartBar } />
                         </button>
                         {
-                            data.length ?
+                            view.length > 1 && data.length > 1 && 
+                            <select 
+                                onChange={ e => {
+                                    const value = view.indexOf(e.target.value)
+                                    setKizaru(value)
+
+                                }}
+                                className={ style.chartSelect }
+                            >
+                            <option>Гибрид</option>
+                                {
+                                    view.map(item => 
+                                        <option>
+                                            { item }
+                                        </option>        
+                                    )
+                                }
+                            </select>                                                        
+                        }                                  
+                        {
+                            data.length ?                               
                                 <IgrFinancialChart
                                     width="calc(100% - 20px)"
                                     height="100%"                      
@@ -377,7 +416,7 @@ const Chart = ({ userProfitability }) => {
                                     overlayBrushes="rgba(5, 138, 0, 0.17)"
                                     overlayOutlines="rgba(5, 138, 0, 0.4)"
                                     overlayThickness={ 2 }
-                                    dataSource={ data }
+                                    dataSource={ kizaru === -1 ? data : data[kizaru] }
                                 />
                             :
                                 <div style={{ color: 'grey' }}>
