@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom'
 
 import AppContext from './AppContext'
 
@@ -18,10 +18,13 @@ import { instruments } from './stocks'
 
 
 const App = () => {
+  const history = useHistory()
+
   const [favorites, setFavorites] = useState([])
   const [userName, setUserName] = useState('Гость')
   const [promptVisible, setPromptVisible] = useState(false)
   const [userProfitability, setUserProfitability] = useState(0)
+  const [range, setRange] = useState("day")
   const [user] = useAuthState(auth)
 
   const removeFromFavorites = async (ticker) => {
@@ -60,7 +63,10 @@ const App = () => {
       async () => {
         if (user) {
           user.getIdToken()
-            .then(idToken => window.sessionStorage.setItem("auth", idToken))
+            .then(idToken => {
+              window.sessionStorage.setItem("auth", idToken)
+              history.push('/stock/welcome')
+            })
             .catch(e => console.error(e))     
 
           try {
@@ -81,20 +87,19 @@ const App = () => {
         }
       }  
     )()  
-  , [user])
+  , [user, history])
 
   useEffect(() =>
     (
       async () => {
         if (user) {
-          console.log(1)
-          const { profitability } = await api.getUserProfitabilityByEmail(user.email)
-          console.log(profitability)
-          setUserProfitability(profitability * 100)
+          console.log(range)
+          const { profitability } = await api.getUserProfitabilityByEmail(user.email, range)
+          setUserProfitability(Math.ceil((profitability) * 100))
         }
       }
     )()
-  , [user, favorites])
+  , [user, favorites, range])
 
   return(
     <AppContext.Provider value={value}>
@@ -104,7 +109,7 @@ const App = () => {
               window.sessionStorage.getItem('auth') || user ? 
                 <>
                   <Route exact path="/stock/:ticker">
-                    <Chart userProfitability={ userProfitability }  />
+                    <Chart setRange={ setRange } userProfitability={ userProfitability }  />
                   </Route>                     
                   <Route path="*">
                     <Redirect to="/stock/welcome" />           
