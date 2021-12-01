@@ -30,9 +30,9 @@ export const getUserCredsByEmail = async (email) => {
 }
 
 
-export const getUserProfitabilityByEmail = async (email) => {
+export const getUserProfitabilityByEmail = async (email, range) => {
   const response = await axios({
-    url: `${baseName}/get-user-profitability/${email}/`,
+    url: `${baseName}/get-user-profitability/${email}/?resolution=${range}`,
     method: GET,
     headers: {
       Authorization: getToken()
@@ -79,7 +79,7 @@ export const removeStockFromFavorites = async (ticker, email) => {
 
 //bearer token required to check when approximation method is set up nahaer ya eto tak napisal
 export const getCandles = async (data) => {
-  const { ticker, startDate, finalDate, resolution } = data
+  const { ticker, startDate, finalDate, resolution, approximation } = data
 
   const __startDate = startDate.split('.').reverse().join('-')
   const __finalDate = finalDate.split('.').reverse().join('-')
@@ -91,6 +91,14 @@ export const getCandles = async (data) => {
     '1 месяц': 'month'
   }
 
+  const apprConvert = {
+    'Линейная экстраполяция': '0',
+    'Авторегрессия': '1',
+    'Сплайн': '2',    
+  }
+
+  console.log(approximation)
+
   const staticCandlesResponse = await axios({
     url: `${baseName}/get-candles/?ticker=${ticker}&from=${__startDate}T00:00:00Z&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}`,
     method: GET
@@ -99,7 +107,7 @@ export const getCandles = async (data) => {
   const ____startDate = staticCandlesResponse.data[staticCandlesResponse.data.length - 1]?.date
 
   const predictedCandlesResponse = await axios({
-    url: `${baseName}/get-predictions-data/?ticker=${ticker}&from=${____startDate}&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}&approximation=0`,
+    url: `${baseName}/get-predictions-data/?ticker=${ticker}&from=${____startDate}&to=${__finalDate}T00:00:00Z&resolution=${convert[resolution]}&approximation=${apprConvert[approximation]}`,
     method: GET,
     headers: {
       Authorization: getToken()
